@@ -1,5 +1,15 @@
+*,
+*::after,
+*::before{
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+
 body {
   margin: 0;
+  padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -7,7 +17,37 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.board{
+  width: 28.15rem;
+  height: 28rem;
+  margin: auto;
+  border: 1px solid black;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cell{
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.5rem;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cell__occupied{
+  background: lightgray;
+}
+
+.btn__solve{
+  margin: 1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1rem;
+  padding: .5rem 2rem;
+  background: #008CBA;
+  color: #ffffff;
+  border-radius: 10rem;
 }
