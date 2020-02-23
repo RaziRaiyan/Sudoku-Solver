@@ -4,29 +4,50 @@ import './App.css';
 
 class App  extends Component{
 
+  initialBoardState = new Set();
+
   constructor() {
     super();
     this.state = {
       board : [
-        ["1","2","3","4","5","6","7","8","9"],
-        ["","","","","","","","",""],
-        ["","","","","","","","",""],
+        ["1","","","","5","","7","",""],
+        ["","2","","","9","","","",""],
+        ["","","3","","","6","","",""],
         ["","","","","","","","",""],
         ["","","","","8","","","",""],
         ["","","","","","","","",""],
-        ["","","","","","","","",""],
-        ["","","","","","","","",""],
-        ["","","","","","","","",""],
+        ["","3","","7","","","1","",""],
+        ["","","","","","","","5",""],
+        ["","","4","5","","","","2",""],
       ]
+    };
+
+    this.state.board.forEach((row,rowIndex) => {
+      row.forEach((val,columnIndex) => {
+        if(val !== ""){
+          this.initialBoardState.add(rowIndex+""+columnIndex);
+        }
+      })
+    });
+
+    // console.log(this.initialBoardState);
+
+  }
+
+
+  async solveSudoku(){
+    const out = await this.canSolveSudokuFromCell(0,0,this.state.board);
+    // console.log(out);
+    console.log(out);
+    if(out){
+      console.log('Solved the sudoku');
+      console.log(this.state.board);
+    }else{
+      console.log('Unable to solve the sudoku');
     }
   }
 
-  solveSudoku(){
-    const out = this.canSolveSudokuFromCell(0,0,this.state.board);
-    console.log(out);
-  }
-
-  canSolveSudokuFromCell(row,col,board){
+  async canSolveSudokuFromCell(row,col,board){
     if(col === board[row].length) {
       col = 0;
       row++;
@@ -36,27 +57,38 @@ class App  extends Component{
               board: board
             }
         );
+        console.log(board);
         return true;
       }
     }
 
     if(board[row][col] !== ""){
-      return this.canSolveSudokuFromCell(row,col+1,board);
+      return await this.canSolveSudokuFromCell(row,col+1,board);
     }
 
     for(let val = 1;val <= board.length ; val++){
       let charToPlace = val;
-
+      await  this.timeout(1);
       if(this.canPlaceValue(board,row,col,charToPlace)){
+        // await this.timeout(500);
         board[row][col] = charToPlace;
-        if(this.canSolveSudokuFromCell(row,col+1,board)){
+        // console.log(row,col,charToPlace);
+        document.getElementById(`cell-${row}-${col}`).innerText = charToPlace;
+        document.getElementById(`cell-${row}-${col}`).classList.remove("cell-operating");
+        document.getElementById(`cell-${row}-${col}`).classList.add("cell-operating");
+        if(await this.canSolveSudokuFromCell(row,col+1,board)){
           return true;
         }
+        // await this.timeout(500);
         board[row][col] = "";
       }
     }
 
     return false;
+  }
+
+  timeout(ms){
+    return new Promise(resolve => {setTimeout(resolve,ms)});
   }
 
   canPlaceValue(board,row,col,charToPlace){
@@ -106,8 +138,15 @@ class App  extends Component{
             {this.state.board.map((row,rowIndex) => {
               return row.map((cell,columnIndex) => {
                 // console.log(cell,rowIndex,columnIndex);
-                let cellClass = "cell" + (cell === "" ? "":" cell__occupied");
-                return (<div className={cellClass} key={rowIndex+""+columnIndex}>{cell}</div>);
+                let cellClass = "cell" + (this.initialBoardState.has(rowIndex+""+columnIndex)  ?  " cell__occupied": "");
+                cellClass += (columnIndex!=0 && columnIndex%3 == 0 ? " colBoundary":"");
+                cellClass += (rowIndex != 8 &&  (rowIndex+1)%3 == 0 ? " rowBoundary":"");
+                return (
+                    <div
+                        id={`cell-${rowIndex}-${columnIndex}`}
+                        className={cellClass} key={rowIndex+""+columnIndex}>
+                      {cell}
+                    </div>);
               })
             })}
           </div>
