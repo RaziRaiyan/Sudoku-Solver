@@ -74,12 +74,13 @@ class App  extends Component{
         board[row][col] = charToPlace;
         // console.log(row,col,charToPlace);
         document.getElementById(`cell-${row}-${col}`).innerText = charToPlace;
-        document.getElementById(`cell-${row}-${col}`).classList.remove("cell-operating");
         document.getElementById(`cell-${row}-${col}`).classList.add("cell-operating");
         if(await this.canSolveSudokuFromCell(row,col+1,board)){
           return true;
         }
         // await this.timeout(500);
+        document.getElementById(`cell-${row}-${col}`).innerText = "";
+        document.getElementById(`cell-${row}-${col}`).classList.remove("cell-operating");
         board[row][col] = "";
       }
     }
